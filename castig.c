@@ -43,6 +43,8 @@ int main()
 		}
 	}
 
+	fclose(fin);
+
 	stmax = (unsigned long long*)calloc(n, sizeof(unsigned long long));
 
 	if (!stmax) { printf("Eroare alocare memorie\n"); return 4; }
@@ -80,6 +82,8 @@ int main()
 	FILE *fout = fopen("castig.out", "w");
 
 	fprintf(fout, "%llu", valmin);
+
+	fclose(fout);
 
 	free(v);
 	free(s);
