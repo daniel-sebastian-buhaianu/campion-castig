@@ -67,12 +67,13 @@ int main()
 		if (drmax[i] < s[i]) drmax[i] = s[i];
 	}
 
-	for (i = k; i < n-k; i++) {
-		maxim = stmax[i-1];
+	for (i = 0; i <= n-k; i++) {
+		maxim = i-1 >= 0 ? stmax[i-1] : drmax[i+k];
+		
+		if (i+k < n)
+			if (maxim < drmax[i+k]) maxim = drmax[i+k];
 
-		if (maxim < drmax[i+k]) maxim = drmax[i+k];
-
-		if (i == k) valmin = maxim;
+		if (i == 0) valmin = maxim;
 		else if (valmin > maxim) valmin = maxim;
 	}
 
@@ -87,4 +88,4 @@ int main()
 
 	return 0;
 }
-// scor 85
+// scor 100
