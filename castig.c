@@ -7,9 +7,9 @@
 
 int main()
 {
-	long long s;
-	unsigned n, k, *v, i, st, stmax, drmax;
-	unsigned long long smax;
+	int i;
+	unsigned n, k, st, *v;
+	unsigned long long sum, *s, *stmax, *drmax, valmin, maxim;
 
 	FILE *fin = fopen("castig.in", "r");
 	
@@ -22,45 +22,69 @@ int main()
 	if (k < 1 || k > NMAX/3) { printf("Eroare valoare k\n"); return 3; }
 
 	v = (unsigned*)malloc(n*sizeof(unsigned));
+	
+	s = (unsigned long long*)calloc(n, sizeof(unsigned long long));
 
-	for (s = smax = st = i = 0; i < n; i++) {
+	if (!v || !s) { printf("Eroare alocare memorie\n"); return 4; }
+
+	for (sum = st = i = 0; i < n; i++) {
 		fscanf(fin, "%u", &v[i]);
-			
-		if (v[i] < 1 || v[i] > VMAX) { printf("Eroare valore v[%u]\n", i); return 4; }
 
-		s += v[i];
+		if (v[i] < 1 || v[i] > VMAX) { printf("Eroare valoare v[%u]\n", i); return 5; }
+
+		sum += v[i];
 
 		if (i-st+1 == k) {
-			if (s > smax) smax = s, stmax = st, drmax = i;
-			
-			s -= v[st], st++;	
+			s[st] = sum;
+
+			sum -= v[st];
+
+			st++;
 		}
 	}
 
-	fclose(fin);
+	stmax = (unsigned long long*)calloc(n, sizeof(unsigned long long));
 
-	for (s = smax = st = i = 0; i < n; i++) {
-		if (i == stmax)
-			st = i = drmax+1, s = v[st];
-		else {
-			s += v[i];
+	if (!stmax) { printf("Eroare alocare memorie\n"); return 4; }
+	
+	stmax[k-1] = s[0];
 
-			if (i-st+1 == k) {
-				if (s > smax) smax = s;
-				
-				s -= v[st], st++;	
-			}
-		}
+	for (i = k; i < n; i++) {
+		stmax[i] = stmax[i-1];
+
+		if (stmax[i] < s[i-k+1]) stmax[i] = s[i-k+1];
+	}
+
+	drmax = (unsigned long long*)calloc(n, sizeof(unsigned long long));
+
+	if (!drmax) { printf("Eroare alocare memorie\n"); return 4; }
+
+	drmax[n-k] = s[n-k];
+
+	for (i = n-k-1; i >= 0; i--) {
+		drmax[i] = drmax[i+1];
+
+		if (drmax[i] < s[i]) drmax[i] = s[i];
+	}
+
+	for (i = k; i < n-k; i++) {
+		maxim = stmax[i-1];
+
+		if (maxim < drmax[i+k]) maxim = drmax[i+k];
+
+		if (i == k) valmin = maxim;
+		else if (valmin > maxim) valmin = maxim;
 	}
 
 	FILE *fout = fopen("castig.out", "w");
 
-	fprintf(fout, "%llu", smax);
-
-	fclose(fout);
+	fprintf(fout, "%llu", valmin);
 
 	free(v);
+	free(s);
+	free(stmax);
+	free(drmax);
 
 	return 0;
 }
-// scor 59
+// scor 85
