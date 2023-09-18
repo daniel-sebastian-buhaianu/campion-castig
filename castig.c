@@ -7,7 +7,9 @@
 
 int main()
 {
-	unsigned n, k, *v, smax, i, st, stmax, drmax, s;
+	long long s;
+	unsigned n, k, *v, i, st, stmax, drmax;
+	unsigned long long smax;
 
 	FILE *fin = fopen("castig.in", "r");
 	
@@ -35,35 +37,30 @@ int main()
 		}
 	}
 
-	for (s = smax = st = i = 0; i < stmax && stmax >= k; i++) {
-		s += v[i];
+	fclose(fin);
 
-		if (i-st+1 == k) {
-			if (s > smax) smax = s;
+	for (s = smax = st = i = 0; i < n; i++) {
+		if (i == stmax)
+			st = i = drmax+1, s = v[st];
+		else {
+			s += v[i];
 
-			s -= v[st], st++;
-		}
-	}
-
-	for (s = 0, st = i = drmax+1; i < n && n-drmax-1 >= k; i++) {
-		s += v[i];
-
-		if (i-st+1 == k) {
-			if (s > smax) smax = s;
-
-			s -= v[st], st++;
+			if (i-st+1 == k) {
+				if (s > smax) smax = s;
+				
+				s -= v[st], st++;	
+			}
 		}
 	}
 
 	FILE *fout = fopen("castig.out", "w");
 
-	fprintf(fout, "%u", smax);
+	fprintf(fout, "%llu", smax);
 
-	fclose(fin);
 	fclose(fout);
 
 	free(v);
 
 	return 0;
 }
-// scor 42
+// scor 59
